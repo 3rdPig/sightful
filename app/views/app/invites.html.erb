@@ -1,0 +1,76 @@
+<div class="invites-main container">
+  <h1 class="invites-title">Your pending invitations</h1>
+  <%
+
+    schedule = Array.new
+    invite = Hash.new
+    index = 0
+    counter = 1
+    x = 1
+
+    @invites.each do |i|
+
+      if x == 1
+        invite['date1'] = i.dt
+      end
+      if x == 2
+        invite['date2'] = i.dt
+      end
+      if x == 3
+        invite['date3'] = i.dt
+      end
+
+      x = x + 1
+
+      if x > 3
+        invite['name'] = i.inviter.first_name + ' ' + i.inviter.last_name
+        invite['content'] = i.ref.content
+
+        schedule[index] = invite
+        invite = Hash.new
+        index = index + 1
+        x = 1
+      end
+
+    end
+
+  %>
+  <% schedule.each do |s| %>
+    <div class="row vertical-align schedule-container">
+
+      <section class="col-xs-5 schedule-ui schedule-content">
+        <img src="images/person-placeholder.jpg" width="40" class="img-responsive inviter-img" alt="img">
+        <ul>
+          <li><strong><%= s['name'] %></strong> requested for a phone conversation</li>
+          <li><%= s['content'] %></li>
+        </ul>
+      </section>
+      <section class="col-xs-4 schedule-ui schedule-times">
+        <ul>
+          <li>
+            <div class="radio">
+              <label><input type="radio" name="time"><%= s['date1'] %></label>
+            </div>
+          </li>
+          <li>
+            <div class="radio">
+              <label><input type="radio" name="time"><%= s['date2'] %></label>
+            </div>
+          </li>
+          <li>
+            <div class="radio">
+              <label><input type="radio" name="time"><%= s['date3'] %></label>
+            </div>
+          </li>
+        </ul>
+      </section>
+      <section class="col-xs-3 schedule-ui schedule-buttons">
+        <div class="btn-group-vertical">
+          <button class="btn-schedule">Accept</button>
+          <button class="btn-decline">Decline</button>
+        </div>
+      </section>
+    </div>
+  <% end %>
+
+</div>
