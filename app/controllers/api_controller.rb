@@ -1006,8 +1006,9 @@ class ApiController < ApplicationController
           sch.save
           sch_group = Schedule.where(status: 1, ref:ref)
           sch_group.each do |s|
-            s.status = 0
-            s.save!
+            sch_line = Schedule.find(s.id)
+            sch_line.status = 0
+            sch_line.save!
           end
         else
           msg = {status:4,msg:'Failed'}
@@ -1022,19 +1023,25 @@ class ApiController < ApplicationController
 
   def decline_invite
     msg = {status:2,msg:'Failed'}
-    if params.include?('id') && params.include?('ref') && params.include?('resp')
+    temp = 'none'
+    if params.include?('ref') && params.include?('resp')
       #id = params['id'].to_i
       ref = params['ref'].to_i
       #resp = params['resp']
       msg = {status:3,msg:'Failed'}
-      if Schedule.any?()
-        sch_group = Schedule.where(status: 1, ref:ref)
-        sch_group.each do |s|
-          s.status = 0
-          s.save!
+      #if Schedule.any?()
+      sch_group = Schedule.where(status: 1, ref:ref)
+      sch_group.each do |s|
+        temp = s.id
+        if Schedule.exists?(s.id)
+          temp = s.id
+          sch_line = Schedule.find(s.id)
+          sch_line.status = 2
+          sch_line.save!
         end
       end
-      msg = {status:1,msg:'Success',group:sch_group}
+      msg = {status:1,msg:'Success',temp:sch_group}
+      #end
     end
     respond_to do |format|
       format.json {render json: msg}

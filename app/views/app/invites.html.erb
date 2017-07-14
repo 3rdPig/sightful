@@ -79,6 +79,8 @@
             <textarea name="decline-message" class="form-control decline-message" cols="30" rows="5"></textarea>
           </div>
         </div>
+        <div class="accept-message-sub hidden"><p>You have accepted the invitation. You will recieve instructions shortly.</p></div>
+        <div class="decline-message-sub hidden"><p>You have declined this invitation. The user has been notified of your decision.</p></div>
       </section>
       <section class="col-xs-3 schedule-ui schedule-buttons">
         <div class="btn-group-vertical default-btns">
@@ -127,7 +129,9 @@
 
       success: function (data) {
         $('#ajax-panel').empty();
-        console.log(data);
+        $container.find('.times-sub').addClass('hidden');
+        $container.find('.default-btns').addClass('hidden');
+        $container.find('.accept-message-sub').removeClass('hidden');
 
         // TODO: Display success modal
       },
@@ -142,9 +146,9 @@
   $('.send').click(function(){
     var $container = $(this).parent().parent().parent();
     var id = $('.user_id').val();
-    var ref = $('.ref').val();
+    var ref = $container.find('.ref').val();
     var resp = $container.find('.decline-message').val();
-    var data = {id:id, ref:ref, resp:resp}
+    var data = {ref:ref, resp:resp}
     console.log(data);
     $.ajax({
       type: 'POST',
@@ -152,6 +156,9 @@
       data: data,
       beforeSend: function () {
         $('#ajax-panel').html('<div class="loading"><img src="/images/squares.svg" alt="Loading..." /></div>');
+        $container.find('.message-sub').addClass('hidden');
+        $container.find('.decline-btns').addClass('hidden');
+        $container.find('.decline-message-sub').removeClass('hidden');
       },
 
       success: function (data) {
