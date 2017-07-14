@@ -658,6 +658,7 @@ class ApiController < ApplicationController
       format.json {render json: msg}
     end
   end
+
   def add_invitation_topic
   	msg = {status:2,msg:'Failed'}
     if params.include?('from') && params.include?('to') && params.include?('topic') && params.include?('ref')
@@ -679,6 +680,7 @@ class ApiController < ApplicationController
       format.json {render json: msg}
     end
   end
+
   def get_notifications
   	msg = {status:2,msg:'Failed'}
   	if params.include?('id')
@@ -708,46 +710,44 @@ class ApiController < ApplicationController
       format.json {render json: msg}
     end
   end
+
   def respond_invite
-  	msg = {status:2,msg:'Failed'}
-	if params.include?('id') && params.include?('invite_id') && params.include?('resp')
-	  id = params['id'].to_i
-	  invite_id = params['invite_id'].to_i
-	  resp = params['resp'].to_i
-  	  msg = {status:3,msg:'Failed'}
-	  if User.exists?(id)
-	  	user = User.find(id)
-  		msg = {status:4,msg:'Failed'}
-	  	if user.invitations.exists?(invite_id)
-	  		if resp == 1
-		  		invite = user.invitations.find(invite_id)
-
-		  		sch1 = Schedule.new
-		  		sch1.dt = invite.dt
-		  		sch1.host = user
-
-		  		host = invite.host
-		  		host.schedules << sch1
-		  		host.save
-
-          notify(invite.host.firtoken,user.first_name+" accepted your invitation" , user.first_name+" accepted your invitation")
-
-		  		user.schedules << invite
-		  		user.invitations.delete(invite_id)
-				user.save
-  				msg = {status:1,msg:'Success'}
-	  		else
-	  			user.invitations.delete(invite_id)
-	  			user.save
-  				msg = {status:1,msg:'Success'}
-	  		end
-	  	end
-	  end
-	end
+    msg = {status:2,msg:'Failed'}
+    if params.include?('id') && params.include?('invite_id') && params.include?('resp')
+      id = params['id'].to_i
+      invite_id = params['invite_id'].to_i
+      resp = params['resp'].to_i
+      msg = {status:3,msg:'Failed'}
+      if User.exists?(id)
+        user = User.find(id)
+        msg = {status:4,msg:'Failed'}
+        if user.invitations.exists?(invite_id)
+          if resp == 1
+            invite = user.invitations.find(invite_id)
+            sch1 = Schedule.new
+            sch1.dt = invite.dt
+            sch1.host = user
+            host = invite.host
+            host.schedules << sch1
+            host.save
+            notify(invite.host.firtoken,user.first_name+" accepted your invitation" , user.first_name+" accepted your invitation")
+            user.schedules << invite
+            user.invitations.delete(invite_id)
+            user.save
+            msg = {status:1,msg:'Success'}
+          else
+            user.invitations.delete(invite_id)
+            user.save
+            msg = {status:1,msg:'Success'}
+          end
+        end
+      end
+    end
     respond_to do |format|
       format.json {render json: msg}
     end
   end
+
   def schedules
   	msg = {status:2,msg:'Failed'}
 	  if params.include?('id')
@@ -765,62 +765,31 @@ class ApiController < ApplicationController
         respond_to do |format|
           format.json {render json: msg}
         end
-			  #s_today = []
-			  #sch_today.each do |s|
-				#  host = s.host
-				#  s = s.as_json
-				#  host = host.as_json
-				#  if host!=nil
-  			#	  host.delete('password')
-  			#    host.delete('auth')
-  			#  end
-				#  s = s.merge({'host':host})
-				#  s_today << s
-			  #nd #end each
-
-			  #dt2 = Date.today
-			  #dt2 = dt2 + 30.days
-			  #sch_month = user.schedules.where(dt: Date.today.end_of_day..dt2.end_of_day)
-			  #s_month = []
-			  #sch_month.each do |s|
-				#  host = s.host
-				#  s = s.as_json
-				#  host = host.as_json
-				#  if host!=nil
-  			#    host.delete('password')
-  			#		host.delete('auth')
-  			#  end
-				#  s = s.merge({'host':host})
-				#  s_month << s
-			  #end #end each
-  			#msg = {status:1,today:s_today,month:s_month,msg:'Success'}
-        #msg = {status:1, data:sch, msg:'Success'}
 		  end #if User.exists?(id)
 	  end #if params.include?('id')
-    #respond_to do |format|
-    #  format.json {render json: msg}
-    #end
   end #end def schedules
+
   def is_follower
-  	msg = {status:2,msg:'Failed'}
-	if params.include?('id') && params.include?('id2')
-		id1  = params['id'].to_i
-		id2 = params['id2'].to_i
-  		msg = {status:3,msg:'Failed'}
-		if User.exists?(id1) && User.exists?(id2)
-			user1 = User.find(id1)
-			count = user1.followers.where(id:id2).count
-			if(count > 0)
-  				msg = {status:1,count:1,msg:'Success'}
-			else
-  				msg = {status:1,count:0,msg:'Success'}
-			end
-		end
-	end
+    msg = {status:2,msg:'Failed'}
+    if params.include?('id') && params.include?('id2')
+      id1  = params['id'].to_i
+      id2 = params['id2'].to_i
+      msg = {status:3,msg:'Failed'}
+      if User.exists?(id1) && User.exists?(id2)
+        user1 = User.find(id1)
+        count = user1.followers.where(id:id2).count
+        if(count > 0)
+          msg = {status:1,count:1,msg:'Success'}
+        else
+          msg = {status:1,count:0,msg:'Success'}
+        end
+      end
+    end
     respond_to do |format|
       format.json {render json: msg}
     end
   end
+
   def unfollow
   	msg = {status:2,msg:'Failed'}
   	if params.include?('id') && params.include?('follower_id')
@@ -840,6 +809,7 @@ class ApiController < ApplicationController
       format.json {render json: msg}
     end
   end
+
   def post_objective
     msg  = {status:2,msg:'Failed'}
     if params.include?('user_id') && params.include?('desc')
@@ -859,6 +829,7 @@ class ApiController < ApplicationController
       format.json {render json: msg}
     end
   end
+
   def get_objectives
     msg  = {status:2,msg:'Failed'}
     if params.include?('user_id')
@@ -889,10 +860,11 @@ class ApiController < ApplicationController
       format.json {render json: msg}
     end
   end
+
   def post_comment
     msg  = {status:2,msg:'Failed'}
     if params.include?('user_id') && params.include?('post_id') && params.include?('desc')
-    msg  = {status:3,msg:'Failed'}
+      msg  = {status:3,msg:'Failed'}
       user_id = params['user_id'].to_i
       post_id = params['post_id'].to_i
       if User.exists?(user_id)
@@ -922,6 +894,7 @@ class ApiController < ApplicationController
       format.json {render json: msg}
     end
   end
+
   def get_comments
     msg  = {status:2,msg:'Failed'}
     if params.include?('post_id')
@@ -948,41 +921,22 @@ class ApiController < ApplicationController
       format.json {render json: msg}
     end
   end
+
   def notify(token, title, body)
-        ids = []
-        ids << token
-        fcm = FCM.new("AAAAzDy_4FM:APA91bGXE9W9Qjj3Ah6aVAC7epVCyxrHqD0McYfSxmfrq5JOPl6DR3hgKU5gz_JHhkojopRNZPDLcyGNcalufuC5zMmoJ58dk64thnY3sv12aQY-KztrF-A25ucyBI9UiIy1bIpO1BqT")
-        options = {data: {title: title,body: body},priority: "high",notification:{title: title,body:body,content_available: true}, collapse_key: "notify_user"}
-        return response = fcm.send(ids, options)
+    ids = []
+    ids << token
+    fcm = FCM.new("AAAAzDy_4FM:APA91bGXE9W9Qjj3Ah6aVAC7epVCyxrHqD0McYfSxmfrq5JOPl6DR3hgKU5gz_JHhkojopRNZPDLcyGNcalufuC5zMmoJ58dk64thnY3sv12aQY-KztrF-A25ucyBI9UiIy1bIpO1BqT")
+    options = {data: {title: title,body: body},priority: "high",notification:{title: title,body:body,content_available: true}, collapse_key: "notify_user"}
+    return response = fcm.send(ids, options)
   end
-    def notify_test
-        user_id = params['id'].to_i
-        user  = User.find(user_id)
-        token = user.firtoken
-        ids = []
-        ids << token
-        title = params['title']
-        body = params['body']
-=begin
-        fcm = FCM.new("AAAAzDy_4FM:APA91bGXE9W9Qjj3Ah6aVAC7epVCyxrHqD0McYfSxmfrq5JOPl6DR3hgKU5gz_JHhkojopRNZPDLcyGNcalufuC5zMmoJ58dk64thnY3sv12aQY-KztrF-A25ucyBI9UiIy1bIpO1BqT")
-        options = {data: {title: title,body: body},priority: "high",notification:{title: title,body:body,content_available: true}, collapse_key: "notify_user"}
-        response = fcm.send(ids, options)
 
-=end
-      res = notify(token,title,body)
-      respond_to do |format|
-      format.json {render json: res}
-        end
-
-    end
-
-    def get_fields
+  def get_fields
       fields = FieldList.order('category ASC')
 
       render json: {status: 'SUCCESS', message: 'Loaded fields', data: fields}, status: :ok
     end
 
-    def set_field
+  def set_field
       field = FieldList.new(field_params)
 
       if field.save
@@ -992,12 +946,12 @@ class ApiController < ApplicationController
       end
     end
 
-    #def get_user
+  #def get_user
     #  user = User.find_by_email(params['email'])
     #  render json: {status: 'SUCCESS', message: 'Loaded user', data: user['mentor']}, status: :ok
     #end
 
-    def get_invites
+  def get_invites
   		#@user = current_user
   		view_model = InviteViewModel.new
   		invites = Array.new
@@ -1035,7 +989,8 @@ class ApiController < ApplicationController
 
     end #end def get_invites
 
-    private def field_params
-      params.permit(:name, :value, :category)
+
+  private def field_params
+    params.permit(:name, :value, :category)
     end
 end
