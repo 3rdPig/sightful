@@ -28,6 +28,7 @@
       if x > 3
         invite['name'] = i.inviter.first_name + ' ' + i.inviter.last_name
         invite['content'] = i.ref.content
+        invite['ref'] = i[:ref]
 
         schedule[index] = invite
         invite = Hash.new
@@ -42,6 +43,7 @@
   <% schedule.each do |s| %>
     <div class="row vertical-align schedule-container">
       <input type="hidden" class="invite_id" value="<%= s['id'] %>">
+      <input type="hidden" class="ref" value="<%= s['ref'] %>">
       <section class="col-xs-5 schedule-ui schedule-content">
         <img src="images/person-placeholder.jpg" width="40" class="img-responsive inviter-img" alt="img">
         <ul>
@@ -59,12 +61,12 @@
             </li>
             <li>
               <div class="radio">
-                <label><input type="radio" name="time"  value="<%= s['id'] %>"><%= s['date2'] %></label>
+                <label><input type="radio" name="time" value="<%= s['id'] %>"><%= s['date2'] %></label>
               </div>
             </li>
             <li>
               <div class="radio">
-                <label><input type="radio" name="time"  value="<%= s['id'] %>"><%= s['date3'] %></label>
+                <label><input type="radio" name="time" value="<%= s['id'] %>"><%= s['date3'] %></label>
               </div>
             </li>
           </ul>
@@ -140,12 +142,13 @@
   $('.send').click(function(){
     var $container = $(this).parent().parent().parent();
     var id = $('.user_id').val();
-    var invite_id = $container.find("input:radio[name='time']:checked").val();
+    var ref = $('.ref').val();
     var resp = $container.find('.decline-message').val();
-    var data = {id:id, invite_id:invite_id, resp:resp}
+    var data = {id:id, ref:ref, resp:resp}
+    console.log(data);
     $.ajax({
       type: 'POST',
-      url: '/api/respond_invite',
+      url: '/api/decline_invite',
       data: data,
       beforeSend: function () {
         $('#ajax-panel').html('<div class="loading"><img src="/images/squares.svg" alt="Loading..." /></div>');

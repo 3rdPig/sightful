@@ -1,4 +1,5 @@
 class ApiController < ApplicationController
+  skip_before_filter :verify_authenticity_token
   require 'tod'
   def signUp_mentor
     msg = {status:2,msg:'Failed'}
@@ -711,7 +712,7 @@ class ApiController < ApplicationController
     end
   end
 
-  def respond_invite
+  def respond_invite_old
     msg = {status:2,msg:'Failed'}
     if params.include?('id') && params.include?('invite_id') && params.include?('resp')
       id = params['id'].to_i
@@ -989,6 +990,56 @@ class ApiController < ApplicationController
 
     end #end def get_invites
 
+  def respond_invite
+    msg = {status:2,msg:'Failed'}
+    if params.include?('id') && params.include?('invite_id') && params.include?('resp')
+      id = params['id'].to_i
+      invite_id = params['invite_id'].to_i
+      resp = params['resp'].to_i
+      msg = {status:3,msg:'Failed'}
+      if Schedule.exists?(invite_id)
+        sch = Schedule.find(invite_id)
+        msg = {status:4,msg:'Failed'}
+        ref = sch.ref
+        if(resp == invite_id)
+          sch.status = 3
+          sch.save
+          sch_group = Schedule.where(status: 1, ref:ref)
+          sch_group.each do |s|
+            s.status = 0
+            s.save!
+          end
+        else
+          msg = {status:4,msg:'Failed'}
+        end
+        msg = {status:1,msg:'Success'}
+      end
+    end
+    respond_to do |format|
+      format.json {render json: msg}
+    end
+  end
+
+  def decline_invite
+    msg = {status:2,msg:'Failed'}
+    if params.include?('id') && params.include?('ref') && params.include?('resp')
+      #id = params['id'].to_i
+      ref = params['ref'].to_i
+      #resp = params['resp']
+      msg = {status:3,msg:'Failed'}
+      if Schedule.any?()
+        sch_group = Schedule.where(status: 1, ref:ref)
+        sch_group.each do |s|
+          s.status = 0
+          s.save!
+        end
+      end
+      msg = {status:1,msg:'Success',group:sch_group}
+    end
+    respond_to do |format|
+      format.json {render json: msg}
+    end
+  end
 
   private def field_params
     params.permit(:name, :value, :category)

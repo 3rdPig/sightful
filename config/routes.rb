@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   post 'api/add_invitation_topic' , to: 'api#add_invitation_topic'
   post 'api/get_notifications' , to: 'api#get_notifications'
   post 'api/respond_invite' , to: 'api#respond_invite'
+  post 'api/decline_invite' , to: 'api#decline_invite'
   post 'api/schedules', to: 'api#schedules'
   post 'api/is_follower' , to: 'api#is_follower'
   post 'api/unfollow' , to: 'api#unfollow'
