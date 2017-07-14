@@ -79,7 +79,11 @@
             <textarea name="decline-message" class="form-control decline-message" cols="30" rows="5"></textarea>
           </div>
         </div>
-        <div class="accept-message-sub hidden"><p>You have accepted the invitation. You will recieve instructions shortly.</p></div>
+        <div class="accept-message-sub hidden">
+          <p>You have accepted the invitation for a meeting on:</p>
+          <p class="accepted_date"><strong></strong></p>
+          <p><a href="https://sinch.callserver.com/2388" class="btn-sinch">Click here to join the coference call.</a></p>
+        </div>
         <div class="decline-message-sub hidden"><p>You have declined this invitation. The user has been notified of your decision.</p></div>
       </section>
       <section class="col-xs-3 schedule-ui schedule-buttons">
@@ -118,6 +122,7 @@
     var id = $('.user_id').val();
     var invite_id = $container.find("input:radio[name='time']:checked").val();
     var resp = $container.find("input:radio[name='time']:checked").val();
+    var accepted_date = $container.find("input:radio[name='time']:checked").text();
     var data = {id:id, invite_id:invite_id, resp:resp}
     $.ajax({
       type: 'POST',
@@ -132,6 +137,7 @@
         $container.find('.times-sub').addClass('hidden');
         $container.find('.default-btns').addClass('hidden');
         $container.find('.accept-message-sub').removeClass('hidden');
+        $container.find('.accepted_date strong').html(accepted_date);
 
         // TODO: Display success modal
       },

@@ -1984,3 +1984,18 @@ footer{
   border: 1px solid #555;
   background: transparent;
 }
+.btn-sinch{
+  color: #10c2ee;
+  border: 1px solid #10c2ee;
+  background: #e7f8f2;
+  transition: 300ms ease-in-out;
+  display: inline-block;
+  margin-top: 30px;
+  padding: 9px 60px;
+  font-size: 20px;
+}
+.btn-sinch:hover{
+  color: #10c2ee;
+  border: 1px solid #10c2ee;
+  background: transparent;
+}

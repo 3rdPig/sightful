@@ -185,54 +185,15 @@ class AppController < ApplicationController
 	#end
 
 	def requests
-  	msg = {status:2,msg:'Failed'}
-	  if params.include?('id')
-		  id = params['id'].to_i
-  		msg = {status:3,msg:'Failed'}
-		  if User.exists?(id)
-			  user = User.find(id)
-			  dt = DateTime.current
-			  dt = (dt.to_time-30.minutes).to_datetime
-			  sch_today = user.schedules.where(status: 1)
-			  s_today = []
-			  sch_today.each do |s|
-				  host = s.host
-				  s = s.as_json
-				  host = host.as_json
-				  if host!=nil
-  				  host.delete('password')
-  			    host.delete('auth')
-  			  end
-				  s = s.merge({'host':host})
-				  s_today << s
-			  end #end each
+		@user = current_user
+		sch = Schedule.where(inviter:current_user['id'])
+		@invites = sch
 
-			  dt2 = Date.today
-			  dt2 = dt2 + 30.days
-			  sch_month = user.schedules.where(dt: Date.today.end_of_day..dt2.end_of_day)
-			  s_month = []
-			  sch_month.each do |s|
-				  host = s.host
-				  s = s.as_json
-				  host = host.as_json
-				  if host!=nil
-  			    host.delete('password')
-  					host.delete('auth')
-  			  end
-				  s = s.merge({'host':host})
-				  s_month << s
-			  end #end each
-  			msg = {status:1,today:s_today,month:s_month,msg:'Success'}
-		  end #if User.exists?(id)
-	  end #if params.include?('id')
-    respond_to do |format|
-      format.json {render json: msg}
-    end
-  end #end def schedules
+	end #end def invites
 
 	def invites
 		@user = current_user
-		sch = Schedule.where(status: 1, invitee:current_user['id'])		
+		sch = Schedule.where(status: 1, invitee:current_user['id'])
 		@invites = sch
 
 	end #end def invites
