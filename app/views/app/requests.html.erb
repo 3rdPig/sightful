@@ -25,6 +25,7 @@
       if x > 3
         invitee = User.find(i.invitee)
         invite['name'] = invitee.first_name + ' ' + invitee.last_name
+        invite['email'] = invitee.email
         invite['content'] = i.ref.content
 
         schedule[index] = invite
@@ -56,11 +57,53 @@
         <div class="accept-message-sub">
           <p>The mentor has accepted your request for a meeting at the following time:</p>
           <p><strong><%= s['date'] %></strong></p>
-          <p><a href="https://sinch.callserver.com/2388" class="btn-sinch">Click here to join the coference call.</a></p>
+          <input id="callUserName" type="hidden" value="<%= s['email'] %>">
+          <p><button id="call" class="btn-sinch">Call</button></p>
+          <p><button id="hangup" class="btn-sinch btn-hang-up hidden">End</button></p>
         </div>
         <% end %>
       </section>
     </div>
   <% end %>
+  <!-- Outgoing Call Modal -->
+  <div id="outgoingModal" class="modal fade outgoing_call" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Calling...</h4>
+        </div>
+        <div class="modal-body">
+          <div id="callLog">
+    			</div>
+    			<div class="error">
+    			</div>
+          <div class="cleafix"></div>
+          <form id="newCall">
+  					<button id="hangup" class="btn-sinch">Hangup</button>
+  					<audio id="ringback" src='/audio/ringback.wav' loop></audio>
+  				</form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>
+<script>
+$('button#hangup').click(function(event) {
+
+  if($(this).hasClass("incall")) {
+
+    console.info('Will request hangup..');
+
+    call && call.hangup();
+
+    $('.incoming_call').modal('hide');
+  }
+});
+</script>

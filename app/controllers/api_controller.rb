@@ -1013,6 +1013,7 @@ class ApiController < ApplicationController
         else
           msg = {status:4,msg:'Failed'}
         end
+        #init sinch
         msg = {status:1,msg:'Success'}
       end
     end

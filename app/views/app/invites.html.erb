@@ -27,6 +27,7 @@
 
       if x > 3
         invite['name'] = i.inviter.first_name + ' ' + i.inviter.last_name
+        invite['email'] = i.inviter.email
         invite['content'] = i.ref.content
         invite['ref'] = i[:ref]
 
@@ -82,7 +83,9 @@
         <div class="accept-message-sub hidden">
           <p>You have accepted the invitation for a meeting on:</p>
           <p class="accepted_date"><strong></strong></p>
-          <p><a href="https://sinch.callserver.com/2388" class="btn-sinch">Click here to join the coference call.</a></p>
+          <input id="callUserName" type="hidden" value="<%= s['email'] %>">
+          <p><button id="call" class="btn-sinch btn-call">Call</button></p>
+          <p><button id="hangup" class="btn-sinch btn-hang-up hidden">End</button></p>
         </div>
         <div class="decline-message-sub hidden"><p>You have declined this invitation. The user has been notified of your decision.</p></div>
       </section>
@@ -98,7 +101,7 @@
       </section>
     </div>
   <% end %>
-
+  
 </div>
 <script>
   $('.decline').click(function(){
@@ -179,6 +182,18 @@
 
       },
     });
+  });
+
+  $('.btn-call').click(function(){
+    var $container = $(this).parent().parent().parent();
+    $container.find('.btn-call').addClass('hidden');
+    $container.find('.btn-hang-up').removeClass('hidden');
+  });
+
+  $('.btn-hang-up').click(function(){
+    var $container = $(this).parent().parent().parent();
+    $container.find('.btn-hang-up').addClass('hidden');
+    $container.find('.btn-call').removeClass('hidden');
   });
 
 </script>

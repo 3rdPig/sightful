@@ -2695,7 +2695,6 @@ $('.btn-schedule').click(function () {
 
       success: function (data) {
         $('#ajax-panel').empty();
-        alert.show('Invitation request sent.')
         window.location = "/mentors";
 
         // TODO: Display success modal
@@ -2708,6 +2707,8 @@ $('.btn-schedule').click(function () {
 
     });
   }
+  alert('Invitation request sent.')
+  window.location = '/mentors'
 });
 
 </script>
